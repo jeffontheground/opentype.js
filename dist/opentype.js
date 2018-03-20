@@ -2786,6 +2786,17 @@ function parseCmapTable(data, start) {
     }
 
     if (offset === -1) {
+        for (var i$1 = cmap.numTables - 1; i$1 >= 0; i$1 -= 1) {
+            var platformId$1 = parse.getUShort(data, start + 4 + (i$1 * 8));
+            var encodingId$1 = parse.getUShort(data, start + 4 + (i$1 * 8) + 2);
+            if (platformId$1 === 0 && encodingId$1 === 3) {
+                offset = parse.getULong(data, start + 4 + (i$1 * 8) + 4);
+                break;
+            }
+        }
+    }
+
+    if (offset === -1) {
         // There is no cmap table in the font that we support.
         throw new Error('No valid cmap sub-tables found.');
     }

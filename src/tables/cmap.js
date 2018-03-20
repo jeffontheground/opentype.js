@@ -100,6 +100,17 @@ function parseCmapTable(data, start) {
     }
 
     if (offset === -1) {
+        for (let i = cmap.numTables - 1; i >= 0; i -= 1) {
+            const platformId = parse.getUShort(data, start + 4 + (i * 8));
+            const encodingId = parse.getUShort(data, start + 4 + (i * 8) + 2);
+            if (platformId === 0 && encodingId === 3) {
+                offset = parse.getULong(data, start + 4 + (i * 8) + 4);
+                break;
+            }
+        }
+    }
+
+    if (offset === -1) {
         // There is no cmap table in the font that we support.
         throw new Error('No valid cmap sub-tables found.');
     }
